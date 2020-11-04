@@ -66,12 +66,12 @@ datasets='gpcr';
 ```
 **Step 3**: parameter Settings
 
-The hyper-parameters are fixed.
+The following parameters are fixed.
 ```
 epsilon = 0.01;
 iter = 10;
 ```
-the parameters: arbitrarily given(The best parameters can be obtained by grid search)
+The following parameters: arbitrarily given(The best parameters can be obtained by grid search)
 ```
 k=20;
 lambda_l=2;

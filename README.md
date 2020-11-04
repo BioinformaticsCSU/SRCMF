@@ -55,44 +55,37 @@ nr_simmat_dg.txt: target similarity matrix;
 # Instructions
 We provide detailed step-by-step instructions for running SRCMF model.
 
-**Step 1**: add datasets\functions paths
+**Step 1**: add datasets\functions paths and name
 ```
-addpath('Datasets');
-addpath('Functions');
+path='data\';
+datasets='gpcr';
 ```
 **Step 2**: load datasets with association matirx and similarity matrices
 ```
-load Fdataset_ms
-A_DR = didr;
-R = (drug_ChemS+drug_AtcS+drug_SideS+drug_DDIS+drug_TargetS)/5;
-D = (disease_PhS+disease_DoS)/2;
+[Y,Sd,St,Did,Tid]=getdata(path,datasets);
 ```
 **Step 3**: parameter Settings
 
 The hyper-parameters are fixed.
 ```
-alpha = 10; 
-beta = 10; 
-gamma = 0.1; 
-threshold = 0.1;
-maxiter = 300; 
-tol1 = 2*1e-3;   
-tol2 = 1*1e-5;
+epsilon = 0.01;
+iter = 10;
 ```
-**Step 4**: run the bounded matrix completion (BMC)
+the parameters: arbitrarily given(The best parameters can be obtained by grid search)
 ```
-trIndex = double(A_DR ~= 0);
-[A_bmc, iter] = fBMC(alpha, beta, A_DR, trIndex, tol1, tol2, maxiter, 0, 1);
-A_DR0 = A_bmc.*double(A_bmc > threshold);
+k=20;
+lambda_l=2;
+lambda_d=1;
+lambda_t=1;
 ```
-**Step 5**: run Gaussian Radial Basis function (GRB)
+**Step 4**: get projection matrix W
 ```
-A_RR = fGRB(R, 0.5);
-A_DD = fGRB(D, 0.5);
+W = ones(size(Y));
+W(Y == 0) = 0;
 ```
-**Step 5**: run the heterogeneous graph based inference (HGBI)
+**Step 5**: run alg_srcmf_predict function (alg_srcmf_predict.m), The complete drug-target interaction matrix 'y_recovery' is obtained
 ```
-A_recovery = fHGI(gamma, A_DD, A_RR, A_DR0);
+y_recovery = alg_srcmf_predict(Y,Sd,St,k,lambda_l,lambda_d,lambda_t,W);
 ```
 
 # A Quickstart Guide
